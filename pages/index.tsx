@@ -4,6 +4,7 @@ import { useState } from "react";
 import Head from "next/head";
 import { useUsers } from "hooks/useUsers";
 import Form from "components/Form";
+import Users from "components/Users";
 
 const initialValues = {
   name: "",
@@ -71,15 +72,7 @@ const Home: NextPage = () => {
             <p>Loading...</p>
           </div>
         ) : (
-          <ul>
-            {users.map((user) => (
-              <li key={user.id}>
-                {user.name} - {user.email}{" "}
-                <button onClick={() => handleEdit(user)}>edit</button>{" "}
-                <button onClick={() => handleDelete(user)}>delete</button>
-              </li>
-            ))}
-          </ul>
+          <Users users={users} onEdit={handleEdit} onDelete={handleDelete} />
         )}
 
         <Form
