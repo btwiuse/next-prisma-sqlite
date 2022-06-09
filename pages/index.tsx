@@ -12,69 +12,47 @@ const initialValues = {
 
 const Home: NextPage = () => {
   const [formData, setFormData] = useState(initialValues);
-  const [actionButton, setActionButton] = useState<"save" | "update">("save");
+  const [actionMethod, setActionMethod] = useState<"save" | "update">("save");
   const { users, isLoading, mutate } = useUsers("/users");
 
-  // Clean form
-  const handleClean = () => {
+  // Clear Form
+  const handleClear = () => {
     setFormData(initialValues);
+    setActionMethod("save");
   };
 
-  // Cancel action
-  const handleCancel = (e: React.MouseEvent) => {
-    e.preventDefault();
-    handleClean();
-    setActionButton("save");
-  };
-
-  // Edit user
-  const handleEdit = async (user: User) => {
+  // Edit User
+  const handleEdit = (user: User) => {
     setFormData(user);
-    setActionButton("update");
+    setActionMethod("update");
   };
 
-  // Save user
+  // Save - Update User
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const method = actionMethod === "save" ? "POST" : "PUT";
     const response = await fetch("/api/users", {
-      method: "POST",
+      method,
       body: JSON.stringify(formData),
     });
     if (response.status < 300) {
       await response.json();
       mutate();
     }
-    setActionButton("save");
-    handleClean();
+    handleClear();
   };
 
-  // Update user
-  const handleUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const response = await fetch("/api/users", {
-      method: "PUT",
-      body: JSON.stringify(formData),
-    });
-    if (response.status < 300) {
-      await response.json();
-      mutate();
-    }
-    setActionButton("save");
-    handleClean();
-  };
-
-  // Delete user
-  const handleDelete = async (id: string) => {
+  // Delete User
+  const handleDelete = async (user: User) => {
     const response = await fetch("/api/users", {
       method: "DELETE",
-      body: JSON.stringify(id),
+      body: JSON.stringify(user),
     });
     if (response.status < 300) {
       await response.json();
       mutate();
     }
-    setActionButton("save");
-    handleClean();
+    handleClear();
   };
 
   return (
@@ -98,7 +76,7 @@ const Home: NextPage = () => {
               <li key={user.id}>
                 {user.name} - {user.email}{" "}
                 <button onClick={() => handleEdit(user)}>edit</button>{" "}
-                <button onClick={() => handleDelete(user.id)}>delete</button>
+                <button onClick={() => handleDelete(user)}>delete</button>
               </li>
             ))}
           </ul>
@@ -108,9 +86,8 @@ const Home: NextPage = () => {
           formData={formData}
           setFormData={setFormData}
           onSave={handleSave}
-          onUpdate={handleUpdate}
-          onCancel={handleCancel}
-          actionButton={actionButton}
+          onClear={handleClear}
+          actionMethod={actionMethod}
         />
       </main>
     </>

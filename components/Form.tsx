@@ -10,30 +10,26 @@ type Props = {
     }>
   >;
   onSave: React.FormEventHandler<HTMLFormElement>;
-  onUpdate: React.FormEventHandler<HTMLFormElement>;
-  onCancel: (e: React.MouseEvent) => void;
-  actionButton: string;
+  onClear: () => void;
+  actionMethod: string;
 };
 
 const Form = ({
   formData,
   setFormData,
   onSave,
-  onUpdate,
-  onCancel,
-  actionButton,
+  onClear,
+  actionMethod,
 }: Props) => {
   return (
     <>
-      <form
-        autoComplete="off"
-        onSubmit={actionButton === "save" ? onSave : onUpdate}
-      >
+      <form autoComplete="off" onSubmit={onSave}>
         <input
           type="text"
           name="name"
           placeholder="Name"
           value={formData.name}
+          required
           onChange={(e) =>
             setFormData({
               ...formData,
@@ -43,10 +39,11 @@ const Form = ({
         />
 
         <input
-          type="text"
+          type="email"
           name="email"
           placeholder="Email"
           value={formData.email}
+          required
           onChange={(e) =>
             setFormData({
               ...formData,
@@ -56,9 +53,9 @@ const Form = ({
         />
 
         <button type="submit">
-          {actionButton === "save" ? "submit" : "update"}
+          {actionMethod === "save" ? "submit" : "update"}
         </button>
-        <button onClick={onCancel}>cancel</button>
+        <input type="button" value="clear" onClick={onClear} />
       </form>
     </>
   );

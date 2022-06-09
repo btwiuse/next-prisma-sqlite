@@ -4,22 +4,36 @@ import prisma from "lib/prisma";
 
 type Data = { message: string } | User | User[];
 
-export default function handle(
+export default async function handle(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  if (req.method === "GET") {
-    return getUsers(req, res);
-  } else if (req.method === "POST") {
-    return createUser(req, res);
-  } else if (req.method === "PUT") {
-    return updateUser(req, res);
-  } else if (req.method === "DELETE") {
-    return deleteUser(req, res);
+  const { method } = req;
+  let data = {} as User;
+  if (req.body) data = JSON.parse(req.body);
+
+  switch (method) {
+    case "GET":
+      await handleGET(res);
+      break;
+    case "POST":
+      await handlePOST(data, res);
+      break;
+    case "PUT":
+      await handlePUT(data, res);
+      break;
+    case "DELETE":
+      await handleDELETE(data.id, res);
+      break;
+    default:
+      throw new Error(
+        `The HTTP ${method} method is not supported at this route.`
+      );
+      break;
   }
 }
 
-const getUsers = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+const handleGET = async (res: NextApiResponse<Data>) => {
   const users = await prisma.user.findMany({
     orderBy: {
       createdAt: "desc",
@@ -28,14 +42,12 @@ const getUsers = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   res.json(users);
 };
 
-const createUser = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
-  const data = JSON.parse(req.body);
+const handlePOST = async (data: User, res: NextApiResponse<Data>) => {
   const user = await prisma.user.create({ data });
   res.json(user);
 };
 
-const updateUser = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
-  const data = JSON.parse(req.body);
+const handlePUT = async (data: User, res: NextApiResponse<Data>) => {
   const user = await prisma.user.update({
     where: {
       id: data.id,
@@ -45,8 +57,7 @@ const updateUser = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   res.json(user);
 };
 
-const deleteUser = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
-  const id = JSON.parse(req.body);
+const handleDELETE = async (id: string, res: NextApiResponse<Data>) => {
   const user = await prisma.user.delete({
     where: { id },
   });
