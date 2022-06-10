@@ -29,7 +29,7 @@ const Form = ({
           name="name"
           placeholder="Name"
           value={formData.name}
-          required
+          // required
           onChange={(e) =>
             setFormData({
               ...formData,
@@ -39,11 +39,11 @@ const Form = ({
         />
 
         <input
-          type="email"
+          type="text"
           name="email"
           placeholder="Email"
           value={formData.email}
-          required
+          // required
           onChange={(e) =>
             setFormData({
               ...formData,

@@ -2,6 +2,7 @@ import type { NextPage } from "next";
 import type { User } from "@prisma/client";
 import { useState } from "react";
 import { useUsers } from "hooks/useUsers";
+import { fetchUser } from "lib/fetchUser";
 import Container from "components/Container";
 import Users from "components/Users";
 import Form from "components/Form";
@@ -20,6 +21,7 @@ const Home: NextPage = () => {
   const handleClear = () => {
     setFormData(initialValues);
     setActionMethod("save");
+    mutate();
   };
 
   // Edit User
@@ -32,28 +34,18 @@ const Home: NextPage = () => {
   const handleSave = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const method = actionMethod === "save" ? "POST" : "PUT";
-    const response = await fetch("/api/users", {
-      method,
-      body: JSON.stringify(formData),
-    });
+    const { response, info } = await fetchUser(method, formData);
     if (response.status < 300) {
-      await response.json();
-      mutate();
+      handleClear();
     }
-    handleClear();
+    console.log(info.message);
   };
 
   // Delete User
   const handleDelete = async (user: User) => {
-    const response = await fetch("/api/users", {
-      method: "DELETE",
-      body: JSON.stringify(user),
-    });
-    if (response.status < 300) {
-      await response.json();
-      mutate();
-    }
+    const { info } = await fetchUser("DELETE", user);
     handleClear();
+    console.log(info.message);
   };
 
   return (
