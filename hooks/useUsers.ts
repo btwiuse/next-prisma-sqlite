@@ -1,5 +1,6 @@
 import type { User } from "@prisma/client";
-import useSWR, { SWRConfiguration } from "swr";
+import type { SWRConfiguration } from "swr";
+import useSWR from "swr";
 
 const fetcher = (...args: [key: string]) =>
   fetch(...args).then((res) => res.json());
