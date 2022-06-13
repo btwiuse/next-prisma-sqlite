@@ -7,7 +7,6 @@ export const fetchUser = async (
     method,
     body: JSON.stringify(data),
   });
-
   const info = await response.json();
 
   return { response, info };

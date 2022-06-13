@@ -26,6 +26,8 @@ export default async function handle(
     case "DELETE":
       await handleDELETE(data, res);
       break;
+    default:
+      res.status(405).end(`Method ${method} not allowed`);
   }
 }
 
