@@ -1,3 +1,5 @@
+import Input from "./Input";
+
 type Props = {
   formData: {
     name: string;
@@ -21,39 +23,32 @@ const Form = ({
   onClear,
   actionMethod,
 }: Props) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
   return (
     <>
       <form autoComplete="off" onSubmit={onSave}>
-        <input
-          type="text"
+        <Input
           name="name"
           placeholder="Name"
           value={formData.name}
-          required
-          onChange={(e) =>
-            setFormData({
-              ...formData,
-              name: e.target.value,
-            })
-          }
+          onInputChange={handleInputChange}
         />
-
-        <input
+        <Input
           type="email"
           name="email"
           placeholder="Email"
           value={formData.email}
-          required
-          onChange={(e) =>
-            setFormData({
-              ...formData,
-              email: e.target.value,
-            })
-          }
+          onInputChange={handleInputChange}
         />
-
         <button type="submit">
-          {actionMethod === "save" ? "submit" : "update"}
+          {actionMethod === "save" ? "save" : "update"}
         </button>
         <input type="button" value="clear" onClick={onClear} />
       </form>
