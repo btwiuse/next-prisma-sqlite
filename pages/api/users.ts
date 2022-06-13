@@ -28,6 +28,7 @@ export default async function handle(
       break;
     default:
       res.status(405).end(`Method ${method} not allowed`);
+      break;
   }
 }
 
